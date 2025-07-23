@@ -1,4 +1,4 @@
-import { response } from "express";
+
 import jwt from "jsonwebtoken"
 import User from "../models/userAuthModels.js";
 
@@ -7,7 +7,6 @@ export const authMiddleware =async (req, res, next) => {
   if (!authHeader || !authHeader.startsWith('Bearer ')) {    
     return res.status(401).json({ message: 'Unauthorized: No token provided' });
   }
-  console.log(authHeader.split(" ")[1])
   const token = authHeader.split(" ")[1];    // Bearer "token"
 
   try {
