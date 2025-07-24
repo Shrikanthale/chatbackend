@@ -6,6 +6,7 @@ import connectDB from "./config/connectDB.js";
 import userAuthRoutes from "./routes/userAuthRoutes.js"
 import postRoutes from "./routes/postRoutes.js"
 import messageRoutes from "./routes/messageRoutes.js"
+import userSidebarRoutes from "./routes/userSidebarRoutes.js"
 dotenv.config()
 connectDB()
 const app = express()
@@ -25,5 +26,6 @@ app.use(express.urlencoded({extended:false}))
 app.use("/api/user", userAuthRoutes)
 app.use("/api/post",postRoutes)
 app.use("/api/message",messageRoutes)
+app.use("/api/usersidebar",userSidebarRoutes)
 const PORT = process.env.PORT
 app.listen(PORT , ()=> console.log(`your port is running on ${PORT}`))
