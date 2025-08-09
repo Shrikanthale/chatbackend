@@ -60,16 +60,14 @@ const userLogin = async (req, res) => {
             expiresIn: "7d"
         });
 
-        // Set cookie
-        // NOTE: In production, ensure NODE_ENV is set to 'production' for secure cookies
+        // Set HTTP-only cookie
         res.cookie("jwt", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "development",
+            secure: process.env.NODE_ENV === "production", // only secure in prod
             sameSite: "strict",
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+            maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
-        // Respond with user info (excluding password)
         const userInfo = {
             _id: user._id,
             name: user.name,
@@ -78,12 +76,17 @@ const userLogin = async (req, res) => {
             profilePic: user.profilePic
         };
 
-        res.status(200).json({ message: "Login successfully", user: userInfo });
+        return res.status(200).json({
+            message: "Login successfully",
+            token, // send token too, in case frontend wants to store it
+            user: userInfo
+        });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Server error during login" });
     }
 };
+
 
 // Get All Users
 const getAllUser = async (req, res) => {

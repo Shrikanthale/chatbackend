@@ -2,23 +2,21 @@ import jwt from "jsonwebtoken";
 import User from "../models/userAuthModels.js";
 export const protectRoute = async (req, res, next) => {
     try {
-        const token = req.cookies.jwt;
+        let token = req.cookies.jwt;
+
+        if (!token && req.headers.authorization) {
+            token = req.headers.authorization.split(" ")[1]; // from Bearer token
+        }
 
         if (!token) {
-            return res.status(401).json({ error: "unauthorize - no token" });
+            return res.status(401).json({ error: "Unauthorized - no token" });
         }
 
-        const decode = jwt.verify(token, process.env.JWT_SECRET);
-
-        const user = await User.findById(decode.userId).select("-password");
-        if (!user) {
-            return res.status(401).json({ error: "unauthorize - invalid user" });
-        }
-
-        req.user = user;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = await User.findById(decoded.userId).select("-password");
         next();
     } catch (error) {
         console.log(error);
-        res.status(500).json({ error: "internal server error" });
+        res.status(401).json({ error: "Unauthorized - invalid token" });
     }
 };
